@@ -21,15 +21,13 @@ unsigned random(unsigned min, unsigned max) {
 
 using namespace std;
 
-void game();
 string str_tolower(string);
 bool str_isalpha(string);
 bool is_valid_guess(string, string);
+void game();
 void print_wordle(string, string);
 
 int main() {
-    //system("title Wordle by rikzy");
-
     srand(time(nullptr));
 
     char op{'y'};
@@ -56,6 +54,34 @@ int main() {
     }
 
     return 0;
+}
+
+string str_tolower(string str) {
+    for(char &c: str)
+        c = tolower(c);
+
+    return str;
+}
+
+bool str_isalpha(string str) {
+    for(const char &c: str)
+        if(!isalpha(c))
+            return false;
+    return true;
+}
+
+bool is_valid_guess(string wordle_word, string guess) {
+    if(!str_isalpha(guess)) {
+        cout << "Invalid characters";
+        return false;
+    }
+
+    if(guess.size() != wordle_word.size()) {
+        cout << "Invalid length";
+        return false;
+    }
+
+    return true;
 }
 
 void game() {
@@ -101,50 +127,46 @@ void game() {
     cout << endl;
 }
 
-string str_tolower(string str) {
-    for(char &c: str)
-        c = tolower(c);
-
-    return str;
-}
-
-bool str_isalpha(string str) {
-    for(const char &c: str)
-        if(!isalpha(c))
-            return false;
-    return true;
-}
-
-bool is_valid_guess(string wordle_word, string guess) {
-    if(!str_isalpha(guess)) {
-        cout << "Invalid characters";
-        return false;
-    }
-
-    if(guess.size() != wordle_word.size()) {
-        cout << "Invalid length";
-        return false;
-    }
-
-    return true;
-}
 
 void print_wordle(string wordle_word, string guess) {
-    string color{""};
+    string corresp_colors;
+
+    for(const char &c: wordle_word)
+        corresp_colors += '_';
+
+    for(size_t i{0}; i < wordle_word.size(); i++) {
+        if(guess.at(i) == wordle_word.at(i)) {
+            corresp_colors.at(i) = 'y';
+
+            wordle_word.at(i) = '_';
+        }
+    }
+
     size_t pos{};
 
-    for(size_t i{0}; i < guess.size(); i++) {
+    for(size_t i{0}; i < wordle_word.size(); i++) {
         pos = wordle_word.find(guess.at(i));
 
         if(pos != string::npos) {
-            if(guess.at(i) == wordle_word.at(i))
-                color = "yellow";
-            else
-                color = "green";
+            corresp_colors.at(i) = 'g';
 
             wordle_word.at(pos) = '_';
-        } else
-            color = "vanilla";
+        }
+    }
+
+    string color;
+
+    for(size_t i{0}; i < wordle_word.size(); i++) {
+        switch(corresp_colors.at(i)) {
+            case 'y':
+                color = "yellow";
+                break;
+            case 'g':
+                color = "green";
+                break;
+            case '_':
+                color = "vanilla";
+        }
 
         cout << dye::colorize(guess.at(i), color).invert(); //highlight
     }
