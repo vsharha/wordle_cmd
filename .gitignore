@@ -2,5 +2,5 @@
 *.cbp
 *.depend
 *.layout
+*.o
 bin/Debug/Wordle.exe
-obj/
