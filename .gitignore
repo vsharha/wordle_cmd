@@ -3,4 +3,4 @@
 *.depend
 *.layout
 bin/Debug/Wordle.exe
-*.o
+obj/
