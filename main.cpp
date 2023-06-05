@@ -13,19 +13,21 @@
     #define CLEAR_SCREEN "clear"
 #endif
 
-unsigned random(unsigned min, unsigned max) {
-    return rand()%(max+1-min)+min;
+unsigned random(unsigned mi, unsigned ma) {
+    return rand()%(ma+1-mi)+mi;
 }
 
-#define r_choice(vec) vec.at(random(0, vec.size()-1))
+template<typename T>
 
-using namespace std;
+T r_choice(const std::vector<T> &vec) {
+    return vec.at(random(0, vec.size()-1));
+}
 
-string str_tolower(string);
-bool str_isalpha(string);
-bool is_valid_guess(string, string);
+std::string str_tolower(std::string);
+bool str_isalpha(std::string);
+bool is_valid_guess(std::string, std::string);
 void game();
-void print_wordle(string, string);
+void print_wordle(std::string, std::string);
 
 int main() {
     srand(time(nullptr));
@@ -35,49 +37,49 @@ int main() {
     while(op == 'y') {
         system(CLEAR_SCREEN);
 
-        cout << dye::green("\tWordle\n").invert() << endl;
+        std::cout << dye::green("\tWordle\n").invert() << std::endl;
 
         game();
 
-        cout << endl;
+        std::cout << std::endl;
 
         while(true) {
-            cout << "Do you want to play again? [Y/y, N/n] > ";
-            cin >> op;
+            std::cout << "Do you want to play again? [Y/y, N/n] > ";
+            std::cin >> op;
             op = tolower(op);
 
             if(op == 'y' || op == 'n')
                 break;
             else
-                cout << "Invalid input\n";
+                std::cout << "Invalid input\n";
         }
     }
 
     return 0;
 }
 
-string str_tolower(string str) {
+std::string str_tolower(std::string str) {
     for(char &c: str)
         c = tolower(c);
 
     return str;
 }
 
-bool str_isalpha(string str) {
+bool str_isalpha(std::string str) {
     for(const char &c: str)
         if(!isalpha(c))
             return false;
     return true;
 }
 
-bool is_valid_guess(string wordle_word, string guess) {
+bool is_valid_guess(std::string wordle_word, std::string guess) {
     if(!str_isalpha(guess)) {
-        cout << "Invalid characters";
+        std::cout << "Invalid characters";
         return false;
     }
 
     if(guess.size() != wordle_word.size()) {
-        cout << "Invalid length";
+        std::cout << "Invalid length";
         return false;
     }
 
@@ -87,49 +89,49 @@ bool is_valid_guess(string wordle_word, string guess) {
 void game() {
     bool player_won{false};
 
-    string wordle_word{r_choice(words)}, guess{};
+    std::string wordle_word{r_choice(words)}, guess{};
 
-    cout << "   ";
+    std::cout << "   ";
     for(const char &c: wordle_word)
-        cout << "_";
-    cout << endl;
+        std::cout << "_";
+    std::cout << std::endl;
 
     for(size_t i{0}; i < wordle_word.size() && !player_won; i++) {
         fflush(stdin);
-        cout << "\n > ";
-        getline(cin, guess);
+        std::cout << "\n > ";
+        getline(std::cin, guess);
         guess = str_tolower(guess);
 
-        cout << endl;
+        std::cout << std::endl;
 
         if(is_valid_guess(wordle_word, guess)) {
             if(guess == wordle_word) {
                 player_won = true;
             }
 
-            cout << i+1 << ". ";
+            std::cout << i+1 << ". ";
             print_wordle(wordle_word, guess);
         } else {
             i--;
         }
 
-        cout << endl;
+        std::cout << std::endl;
     }
 
-    cout << endl;
+    std::cout << std::endl;
 
     if(player_won)
-        cout << "Good job!";
+        std::cout << "Good job!";
     else
-        cout << "The word you didn't guess was " << dye::colorize(wordle_word, "yellow").invert() << "\n"
-                "Better luck next time!";
+        std::cout << "The word you didn't guess was " << dye::colorize(wordle_word, "yellow").invert() << std::endl;
+        std::cout << "Better luck next time!";
 
-    cout << endl;
+    std::cout << std::endl;
 }
 
 
-void print_wordle(string wordle_word, string guess) {
-    string corresp_colors;
+void print_wordle(std::string wordle_word, std::string guess) {
+    std::string corresp_colors;
 
     for(const char &c: wordle_word)
         corresp_colors += '_';
@@ -147,14 +149,14 @@ void print_wordle(string wordle_word, string guess) {
     for(size_t i{0}; i < wordle_word.size(); i++) {
         pos = wordle_word.find(guess.at(i));
 
-        if(pos != string::npos) {
+        if(pos != std::string::npos) {
             corresp_colors.at(i) = 'g';
 
             wordle_word.at(pos) = '_';
         }
     }
 
-    string color;
+    std::string color;
 
     for(size_t i{0}; i < wordle_word.size(); i++) {
         switch(corresp_colors.at(i)) {
@@ -168,6 +170,6 @@ void print_wordle(string wordle_word, string guess) {
                 color = "vanilla";
         }
 
-        cout << dye::colorize(guess.at(i), color).invert(); //highlight
+        std::cout << dye::colorize(guess.at(i), color).invert(); //highlight
     }
 }
