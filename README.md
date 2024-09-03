@@ -1,4 +1,4 @@
-# wordle
+# wordle_cmd
 A Wordle game coded in c++
 
 credits:
